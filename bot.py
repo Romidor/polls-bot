@@ -480,6 +480,7 @@ def main():
     logger.info("Бот запущен. Ожидание сообщений…")
     for event in longpoll.listen():
         if event.type == VkBotEventType.MESSAGE_NEW:
+            logger.info(f"Получено сообщение: peer_id={event.message.peer_id}, "f"text={event.message.text!r}")
             handle_command(event)
 
 if __name__ == "__main__":
