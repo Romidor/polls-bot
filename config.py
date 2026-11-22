@@ -13,9 +13,9 @@ def _require_env(name: str) -> str:
     return value
 
 # Токен сообщества — только из переменной окружения
-TOKEN = _require_env("VK_TOKEN")
+TOKEN = _require_env("VK_ACCESS_TOKEN")
 
 # Остальные настройки можно оставить в файле
 GROUP_ID = int(os.environ.get("VK_GROUP_ID", "123456789"))  # можно переопределить через env
-TIMEZONE = os.environ.get("VK_TIMEZONE", "Europe/Moscow")
+TIMEZONE = os.environ.get("TZ", "Europe/Moscow")
 POLL_CREATION_OFFSET_MINUTES = int(os.environ.get("VK_POLL_OFFSET_MINUTES", "60"))
