@@ -19,11 +19,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# bot.py (фрагмент в начале, после import config)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SCHEDULE_FILE = os.path.join(BASE_DIR, "schedule.json")
-CANCEL_FILE = os.path.join(BASE_DIR, "cancellations.json")
-SENT_FILE = os.path.join(BASE_DIR, "sent_polls.json")
-CHAT_FILE = os.path.join(BASE_DIR, "chat.json")
+DATA_DIR = os.environ.get("DATA_DIR", BASE_DIR)
+
+SCHEDULE_FILE = os.path.join(DATA_DIR, "schedule.json")
+CANCEL_FILE   = os.path.join(DATA_DIR, "cancellations.json")
+SENT_FILE     = os.path.join(DATA_DIR, "sent_polls.json")
+CHAT_FILE     = os.path.join(DATA_DIR, "chat.json")
 
 vk_session = vk_api.VkApi(token=config.TOKEN)
 vk = vk_session.get_api()

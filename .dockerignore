@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv/
+venv/
+.git/
+.gitignore
+*.md
+Dockerfile
+docker-compose.yml
+schedule.json
+cancellations.json
+sent_polls.json
+chat.json
+data/
