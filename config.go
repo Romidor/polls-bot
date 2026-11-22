@@ -11,7 +11,6 @@ import (
 type Config struct {
 	Token    string
 	GroupID  int
-	ChatID   int
 	AdminIDs map[int]bool
 	Timezone *time.Location
 	DataDir  string
@@ -26,11 +25,6 @@ func LoadConfig() *Config {
 	groupID, err := strconv.Atoi(os.Getenv("VK_GROUP_ID"))
 	if err != nil {
 		log.Fatal("VK_GROUP_ID must be an integer")
-	}
-
-	chatID, err := strconv.Atoi(os.Getenv("VK_CHAT_ID"))
-	if err != nil {
-		log.Fatal("VK_CHAT_ID must be an integer")
 	}
 
 	adminRaw := os.Getenv("VK_ADMIN_IDS")
@@ -64,7 +58,6 @@ func LoadConfig() *Config {
 	return &Config{
 		Token:    token,
 		GroupID:  groupID,
-		ChatID:   chatID,
 		AdminIDs: adminIDs,
 		Timezone: loc,
 		DataDir:  dataDir,

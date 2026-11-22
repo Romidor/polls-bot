@@ -7,6 +7,7 @@ type ScheduleSlot struct {
 	Type      string       `json:"type"`  // pool, gym, island, lecture
 	Time      string       `json:"time"`  // "20:00"
 	Title     string       `json:"title"` // человекочитаемое название
+	ChatId    int          `json:"chat_id"`
 }
 
 type Override struct {
@@ -15,6 +16,7 @@ type Override struct {
 	OriginalTime string `json:"original_time,omitempty"`
 	NewTime      string `json:"new_time,omitempty"`
 	Reason       string `json:"reason,omitempty"`
+	ChatId       int    `json:"chat_id"`
 }
 
 type ActivePoll struct {

@@ -105,6 +105,7 @@ func resolveSlot(state *State, schedule []ScheduleSlot, dateStr string, d time.T
 			Type:      ov.Type,
 			Time:      timeStr,
 			Title:     typeTitle(ov.Type),
+			ChatId:    ov.ChatId,
 		}
 	}
 
@@ -131,7 +132,7 @@ func (s *Scheduler) createPollForDate(ctx context.Context, dateStr string, d tim
 		Date:      dateStr,
 		Type:      slot.Type,
 		Time:      slot.Time,
-		ChatID:    s.config.ChatID,
+		ChatID:    slot.ChatId,
 		Attempts:  0,
 		CreatedAt: time.Now().Format(time.RFC3339),
 	}

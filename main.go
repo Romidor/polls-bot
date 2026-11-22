@@ -53,11 +53,8 @@ func main() {
 	handler := NewCommandHandler(store, vk, cfg)
 
 	lp.MessageNew(func(ctx context.Context, obj events.MessageNewObject) {
-		// Игнорируем сообщения от самого бота и не из целевого чата
+		// Игнорируем сообщения от самого бота
 		if obj.Message.FromID < 0 {
-			return
-		}
-		if obj.Message.PeerID != cfg.ChatID {
 			return
 		}
 		handler.Handle(ctx, obj)

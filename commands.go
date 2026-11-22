@@ -139,12 +139,12 @@ func (h *CommandHandler) scheduleAdd(ctx context.Context, obj events.MessageNewO
 	for i, s := range h.store.Schedule {
 		if s.DayOfWeek == day {
 			replaced = true
-			h.store.Schedule[i] = ScheduleSlot{DayOfWeek: day, Type: typ, Time: timeStr, Title: typeTitle(typ)}
+			h.store.Schedule[i] = ScheduleSlot{DayOfWeek: day, Type: typ, Time: timeStr, Title: typeTitle(typ), ChatId: obj.Message.PeerID}
 			break
 		}
 	}
 	if !replaced {
-		h.store.Schedule = append(h.store.Schedule, ScheduleSlot{DayOfWeek: day, Type: typ, Time: timeStr, Title: typeTitle(typ)})
+		h.store.Schedule = append(h.store.Schedule, ScheduleSlot{DayOfWeek: day, Type: typ, Time: timeStr, Title: typeTitle(typ), ChatId: obj.Message.PeerID})
 	}
 	_ = h.store.SaveSchedule()
 	h.store.Unlock()
@@ -172,7 +172,7 @@ func (h *CommandHandler) scheduleRemove(ctx context.Context, obj events.MessageN
 	h.store.Lock()
 	var removed *ScheduleSlot
 	for i, s := range h.store.Schedule {
-		if s.DayOfWeek == day {
+		if s.DayOfWeek == day && s.ChatId == obj.Message.PeerID {
 			removed = &s
 			h.store.Schedule = append(h.store.Schedule[:i], h.store.Schedule[i+1:]...)
 			break
@@ -239,6 +239,7 @@ func (h *CommandHandler) handlePlan(ctx context.Context, obj events.MessageNewOb
 		Status:  "extra",
 		Type:    typ,
 		NewTime: timeStr,
+		ChatId:  obj.Message.PeerID,
 	}
 	_ = h.store.SaveState()
 	h.store.Unlock()
@@ -301,6 +302,7 @@ func (h *CommandHandler) handleMove(ctx context.Context, obj events.MessageNewOb
 		Type:         typ,
 		OriginalTime: oldTime,
 		NewTime:      newTime,
+		ChatId:       obj.Message.PeerID,
 	}
 	_ = h.store.SaveState()
 	h.store.Unlock()
@@ -356,6 +358,7 @@ func (h *CommandHandler) handleCancel(ctx context.Context, obj events.MessageNew
 		Status: "cancelled",
 		Type:   typ,
 		Reason: reason,
+		ChatId: obj.Message.PeerID,
 	}
 	_ = h.store.SaveState()
 	h.store.Unlock()
