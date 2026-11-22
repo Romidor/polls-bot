@@ -63,6 +63,9 @@ def load_json(path, default):
         return json.load(f)
 
 def save_json(path, data):
+    parent = os.path.dirname(path)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
