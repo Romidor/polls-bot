@@ -8,7 +8,7 @@ from zoneinfo import ZoneInfo
 
 import vk_api
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 import config
@@ -31,7 +31,7 @@ CHAT_FILE     = os.path.join(DATA_DIR, "chat.json")
 vk_session = vk_api.VkApi(token=config.TOKEN)
 vk = vk_session.get_api()
 longpoll = VkBotLongPoll(vk_session, config.GROUP_ID)
-scheduler = AsyncIOScheduler(timezone=ZoneInfo(config.TIMEZONE))
+scheduler = BackgroundScheduler(timezone=ZoneInfo(config.TIMEZONE))
 
 # ---------- дни недели ----------
 RU_DAYS = [
@@ -162,6 +162,7 @@ def schedule_lesson(lesson):
     job_id = f"poll_{day_ru}_{lesson['time']}_{lesson['type']}"
 
     def job():
+        logger.info(f"▶ Сработала задача {job_id}")
         today = datetime.now(ZoneInfo(config.TIMEZONE)).date().isoformat()
         if today in load_cancellations():
             logger.info(f"Занятие {lesson['type']} на {today} отменено.")
