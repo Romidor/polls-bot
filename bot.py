@@ -33,6 +33,10 @@ vk = vk_session.get_api()
 longpoll = VkBotLongPoll(vk_session, config.GROUP_ID)
 scheduler = BackgroundScheduler(timezone=ZoneInfo(config.TIMEZONE))
 
+# Сессия пользователя — ТОЛЬКО для polls.create
+user_vk_session = vk_api.VkApi(token=config.USER_TOKEN)
+user_vk = user_vk_session.get_api()
+
 # ---------- дни недели ----------
 RU_DAYS = [
     "понедельник", "вторник", "среда", "четверг",
@@ -109,7 +113,7 @@ def create_poll(lesson_type, lesson_time, date_str):
         {"text": "Не иду"},
     ]
     try:
-        response = vk.polls.create(
+        response = user_vk.polls.create(
             owner_id=-config.GROUP_ID,
             question=question,
             add_answers=json.dumps(answers, ensure_ascii=False),
@@ -117,8 +121,9 @@ def create_poll(lesson_type, lesson_time, date_str):
             is_multiple=0,
         )
         poll_id = response["id"]
+        # Вложение: poll-{GROUP_ID}_{poll_id}
         attachment = f"poll-{config.GROUP_ID}_{poll_id}"
-        vk.messages.send(
+        vk.messages.send(          # отправляем уже от имени сообщества
             peer_id=peer_id,
             message=f"📊 Опрос: {question}",
             attachment=attachment,
