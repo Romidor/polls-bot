@@ -6,6 +6,8 @@ import time
 import requests
 
 
+VK_AUTH_URL = os.environ.get("VK_AUTH_URL", "https://id.vk.ru/oauth2/auth")
+
 class VKTokenManager:
 
     def __init__(self, tokens_file="/app/data/vk_tokens.json"):
