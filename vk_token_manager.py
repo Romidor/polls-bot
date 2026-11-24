@@ -42,7 +42,7 @@ class VKTokenManager:
             "refresh_token": self.data["refresh_token"],
             "client_id": self.data["client_id"],
             "device_id": self.data["device_id"],
-            "state": secrets.token_urlsafe(16),
+            "state": secrets.token_urlsafe(32),
         }
         headers = {
             "Content-Type": "application/x-www-form-urlencoded",
