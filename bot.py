@@ -15,8 +15,6 @@ from vk_token_manager import VKTokenManager
 
 import config
 
-token_manager = VKTokenManager("vk_tokens.json")
-
 _cached_token = None
 _cached_vk_api = None
 
@@ -34,6 +32,9 @@ SCHEDULE_FILE = os.path.join(DATA_DIR, "schedule.json")
 CANCEL_FILE   = os.path.join(DATA_DIR, "cancellations.json")
 SENT_FILE     = os.path.join(DATA_DIR, "sent_polls.json")
 CHAT_FILE     = os.path.join(DATA_DIR, "chat.json")
+TOKENS_FILE   = os.path.join(DATA_DIR, "vk_tokens.json")
+
+token_manager = VKTokenManager(TOKENS_FILE)
 
 vk_session = vk_api.VkApi(token=config.TOKEN)
 vk = vk_session.get_api()
