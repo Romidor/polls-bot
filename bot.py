@@ -11,7 +11,14 @@ from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
+from vk_token_manager import VKTokenManager
+
 import config
+
+token_manager = VKTokenManager("vk_tokens.json")
+
+_cached_token = None
+_cached_vk_api = None
 
 logging.basicConfig(
     level=logging.INFO,
@@ -34,8 +41,20 @@ longpoll = VkBotLongPoll(vk_session, config.GROUP_ID)
 scheduler = BackgroundScheduler(timezone=ZoneInfo(config.TIMEZONE))
 
 # Сессия пользователя — ТОЛЬКО для polls.create
-user_vk_session = vk_api.VkApi(token=config.USER_TOKEN)
-user_vk = user_vk_session.get_api()
+def get_user_vk():
+    global _cached_token, _cached_vk_api
+
+    current_token = token_manager.get_token()
+
+    # Пересоздаём сессию vk_api только если токен обновился
+    if current_token != _cached_token or _cached_vk_api is None:
+        session = vk_api.VkApi(token=current_token, api_version="5.199")
+        # Переводим запросы vk_api на актуальный домен .ru
+        session.http.headers.update({"User-Agent": "Mozilla/5.0"})
+        _cached_token = current_token
+        _cached_vk_api = session.get_api()
+
+    return _cached_vk_api
 
 # ---------- дни недели ----------
 RU_DAYS = [
@@ -112,8 +131,9 @@ def create_poll(lesson_type, lesson_time, date_str):
         {"text": "Иду"},
         {"text": "Не иду"},
     ]
+    new_token = token_manager.get_token()
     try:
-        response = user_vk.polls.create(
+        response = get_user_vk().polls.create(
             owner_id=-config.GROUP_ID,
             question=question,
             add_answers=json.dumps(answers, ensure_ascii=False),
