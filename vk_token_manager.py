@@ -34,7 +34,7 @@ class VKTokenManager:
 
     def refresh(self):
         """Принудительно обновляет access_token и refresh_token."""
-        url = "https://vk.ru"
+        url = "https://id.vk.ru"
         payload = {
             "grant_type": "refresh_token",
             "refresh_token": self.data["refresh_token"],
@@ -42,14 +42,37 @@ class VKTokenManager:
             "device_id": self.data["device_id"],
             "state": secrets.token_urlsafe(16),
         }
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                " (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+            ),
+        }
 
-        response = requests.post(url, data=payload, timeout=15)
-        result = response.json()
+        response = requests.post(
+            url, data=payload, headers=headers, timeout=15, allow_redirects=False
+        )
+
+        # Если ВК пытается сделать редирект (301/302) — сразу увидим куда
+        if response.is_redirect or response.status_code >= 400:
+            raise RuntimeError(
+                f"HTTP {response.status_code} от VK ID. Location:"
+                f" {response.headers.get('Location')}. Тело:"
+                f" {response.text[:300]}"
+            )
+
+        try:
+            result = response.json()
+        except ValueError:
+            raise RuntimeError(
+                f"VK ID вернул не JSON (HTTP {response.status_code}):"
+                f" {response.text[:300]}"
+            )
 
         if "access_token" not in result:
             raise RuntimeError(f"Ошибка обновления токена VK ID: {result}")
 
-        # Сохраняем новую пару токенов и рассчитываем время истечения (обычно 3600 сек)
         expires_in = int(result.get("expires_in", 3600))
         self.data["access_token"] = result["access_token"]
         self.data["refresh_token"] = result["refresh_token"]
