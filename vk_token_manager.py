@@ -6,6 +6,8 @@ import time
 import requests
 
 
+VK_AUTH_URL = os.environ.get("VK_AUTH_URL", "https://id.vk.ru/oauth2/auth")
+
 class VKTokenManager:
 
     def __init__(self, tokens_file="vk_tokens.json"):
@@ -34,7 +36,7 @@ class VKTokenManager:
 
     def refresh(self):
         """Принудительно обновляет access_token и refresh_token."""
-        url = "https://id.vk.ru"
+        url = VK_AUTH_URL
         payload = {
             "grant_type": "refresh_token",
             "refresh_token": self.data["refresh_token"],
