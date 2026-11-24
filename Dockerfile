@@ -28,7 +28,7 @@ LABEL maintainer="you@example.com" \
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
-    TZ=Europe/Moscow
+    TZ=Europe/Samara
 
 # --- системные зависимости ---
 # tzdata        — база часовых поясов для zoneinfo (Europe/Moscow и др.)
@@ -54,9 +54,9 @@ USER bot
 
 # Data-каталог будет смонтирован volume-ом:
 #   schedule.json, cancellations.json, sent_polls.json, chat.json
-VOLUME ["/app/data"]
+#VOLUME ["/app/data"]
 
 # Переопределяем пути к файлам данных на /app/data, чтобы не писать в слой образа
-ENV DATA_DIR=/app/data
+#ENV DATA_DIR=/app/data
 
 CMD ["python", "bot.py"]
